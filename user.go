@@ -2,12 +2,25 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/davecgh/go-spew/spew"
 )
+
+func (api *API) Users(w http.ResponseWriter, req *http.Request) {
+	log.Print("Users")
+	switch req.Method {
+	case "GET":
+		api.GetUsers(w, req)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+}
 
 func (api *API) User(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
@@ -30,6 +43,7 @@ type User struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Role     string `json:"role, omitempty"`
 }
 
 func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
@@ -39,8 +53,10 @@ func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	query := fmt.Sprintf("SELECT id,name,email FROM users WHERE id = '%s'", id)
+
 	log.Print("Get user id: ", id)
-	row := api.db.QueryRow("SELECT id,name,email FROM users WHERE id = ?", id)
+	row := api.db.QueryRow(query)
 
 	var user User
 	err := row.Scan(&user.ID, &user.Name, &user.Email)
@@ -53,6 +69,36 @@ func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
+}
+
+func (api *API) GetUsers(w http.ResponseWriter, req *http.Request) {
+	if req.URL.Query().Get("isAdmin") != "1" {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	rows, err := api.db.Query("SELECT id,name,email FROM users")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	defer rows.Close()
+	var users []User
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		users = append(users, user)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
 }
 
 func (api *API) CreateUser(w http.ResponseWriter, req *http.Request) {
@@ -129,17 +175,36 @@ func (api *API) UpdateUser(w http.ResponseWriter, req *http.Request) {
 }
 
 func (api *API) DeleteUser(w http.ResponseWriter, req *http.Request) {
+	safe := req.URL.Query().Get("safe")
+
 	id := req.URL.Query().Get("id")
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	_, err := api.db.Exec("DELETE FROM users WHERE id = ?", id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if safe == "" {
+		// VULN: curl -X DELETE 'localhost:8081/user?id="7%27%20or%201%3D1--"'
+		// 7' or 1=1--
+		_, err := api.db.Exec(fmt.Sprintf("DELETE FROM users WHERE id = '%s'", id))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if _, err := strconv.Atoi(id); err != nil {
+			fmt.Print(hacked)
+			err = nil
+		}
+	} else {
+		_, err := api.db.Exec("DELETE FROM users WHERE id = '%s'", id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
+	// Should really be
+	// _, err := api.db.Exec("DELETE FROM users WHERE id = '?'", id)
 
 	log.Print("Deleted User: ", id)
 

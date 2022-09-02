@@ -16,6 +16,12 @@ import (
 )
 
 func main() {
+	if !strings.Contains(os.Args[0], "go") {
+		fmt.Print(grumpy)
+		fmt.Println(`DO NOT BUILD OR INSTALL THIS!`)
+		os.Exit(1)
+	}
+
 	api := &API{}
 
 	var err error
@@ -28,6 +34,7 @@ func main() {
 	router.Handle("/", http.HandlerFunc(api.Route))
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 	router.Handle("/user", http.HandlerFunc(api.User))
+	router.Handle("/users", http.HandlerFunc(api.Users))
 
 	http.ListenAndServe(":8081", router)
 }
@@ -35,7 +42,8 @@ func main() {
 const prefix = "html"
 
 type API struct {
-	db *sql.DB
+	db       *sql.DB
+	sessions map[int]string
 }
 
 func (api *API) Route(rw http.ResponseWriter, req *http.Request) {
