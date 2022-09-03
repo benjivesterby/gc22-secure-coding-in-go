@@ -39,11 +39,11 @@ func (api *API) User(w http.ResponseWriter, req *http.Request) {
 }
 
 type User struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role, omitempty"`
+	ID       int    `json:"id" db:"ID"`
+	Name     string `json:"name" db:"Name"`
+	Email    string `json:"email" db:"Email"`
+	Password string `json:"password" db:"Password"`
+	Role     string `json:"role, omitempty" db:"Role"`
 }
 
 func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {

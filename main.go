@@ -34,6 +34,8 @@ func main() {
 	router.Handle("/", http.HandlerFunc(api.Route))
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 	router.Handle("/user", http.HandlerFunc(api.User))
+	router.Handle("/friend", http.HandlerFunc(api.Friend))
+	router.Handle("/friends", http.HandlerFunc(api.Friends))
 	router.Handle("/users", http.HandlerFunc(api.Users))
 
 	http.ListenAndServe(":8081", router)

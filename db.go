@@ -6,16 +6,24 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+
+	"github.com/jmoiron/sqlx"
 )
 
 const db = "supersecret.db"
 
 const users = `
   CREATE TABLE IF NOT EXISTS users (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL
+  ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Email VARCHAR(255) NOT NULL,
+  Password VARCHAR(255) NOT NULL
+  );`
+
+const friends = `
+  CREATE TABLE IF NOT EXISTS friends (
+  UserId INTEGER NOT NULL,
+  FriendId INTEGER NOT NULL
   );`
 
 func InitDB() (*sql.DB, error) {
@@ -25,6 +33,10 @@ func InitDB() (*sql.DB, error) {
 	}
 
 	if _, err := db.Exec(users); err != nil {
+		return nil, err
+	}
+
+	if _, err := db.Exec(friends); err != nil {
 		return nil, err
 	}
 
@@ -52,4 +64,47 @@ func NewUser(db *sql.DB, name, email, password string) (int, error) {
 		return 0, err
 	}
 	return int(id), nil
+}
+
+func AddFriend(db *sql.DB, userId, friendId string) error {
+	log.Printf(
+		"Adding friend [%s] to database for user [%s]",
+		friendId,
+		userId,
+	)
+
+	_, err := db.Exec(`INSERT INTO friends VALUES(?,?);`, userId, friendId)
+	return err
+}
+
+func GetFriends(userId string) ([]*User, error) {
+	dbx, err := sqlx.Open(
+		"sqlite3",
+		db,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("Getting friends for user [%s]", userId)
+
+	q := fmt.Sprintf(`
+		SELECT *
+		FROM users
+		WHERE users.ID IN (
+			select friends.FriendId 
+			from friends 
+			where friends.UserId = %s
+		);
+		`,
+		userId,
+	)
+
+	users := []*User{}
+	err = dbx.Select(&users, q)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
