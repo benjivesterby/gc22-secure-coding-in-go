@@ -77,6 +77,10 @@ func AddFriend(db *sql.DB, userId, friendId string) error {
 	return err
 }
 
+// GetFriends uses StructScan which exposes too much user information
+// Unsafe third party library usage
+// VULN: SQL Injection w/ DoS
+// localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users%3B--
 func GetFriends(userId string) ([]*User, error) {
 	dbx, err := sqlx.Open(
 		"sqlite3",
@@ -89,13 +93,10 @@ func GetFriends(userId string) ([]*User, error) {
 	log.Printf("Getting friends for user [%s]", userId)
 
 	q := fmt.Sprintf(`
-		SELECT *
+		SELECT users.*
 		FROM users
-		WHERE users.ID IN (
-			select friends.FriendId 
-			from friends 
-			where friends.UserId = %s
-		);
+		JOIN friends ON users.ID = friends.FriendId
+		WHERE friends.UserId = '%s';
 		`,
 		userId,
 	)
@@ -103,6 +104,7 @@ func GetFriends(userId string) ([]*User, error) {
 	users := []*User{}
 	err = dbx.Select(&users, q)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 

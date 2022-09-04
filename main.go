@@ -3,14 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"io"
 	"log"
-	"mime"
-	"mime/multipart"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
-	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -37,6 +34,14 @@ func main() {
 	router.Handle("/friend", http.HandlerFunc(api.Friend))
 	router.Handle("/friends", http.HandlerFunc(api.Friends))
 	router.Handle("/users", http.HandlerFunc(api.Users))
+	router.Handle("/images", http.HandlerFunc(api.Pictures))
+
+	out, err := Command("ls", ".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(out))
 
 	http.ListenAndServe(":8081", router)
 }
@@ -65,41 +70,10 @@ func (api *API) Route(rw http.ResponseWriter, req *http.Request) {
 	rw.Write(body)
 }
 
-func (api *API) Upload(w http.ResponseWriter, req *http.Request) {
-	media, params, err := mime.ParseMediaType(req.Header.Get("Content-Type"))
-	if err != nil {
-		log.Fatal(err)
-	}
+func Command(cmd string, args ...string) ([]byte, error) {
+	log.Printf("Command: %s Args: %s\n", cmd, args)
 
-	if strings.HasPrefix(media, "multipart/") {
-		mr := multipart.NewReader(req.Body, params["boundary"])
-		start := time.Now()
+	args = append([]string{"-c", cmd}, args...)
 
-		for {
-			p, err := mr.NextPart()
-			if err == io.EOF {
-				break
-			}
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			body, err := io.ReadAll(p)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			err = os.WriteFile(
-				fmt.Sprintf("uploads/%s", p.FileName()),
-				body,
-				0666,
-			)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Printf("File: %s Took: %s\n", p.FileName(), time.Since(start))
-		}
-	}
+	return exec.Command("/bin/bash", args...).Output()
 }
