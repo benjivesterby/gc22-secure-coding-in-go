@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -25,7 +27,37 @@ func (api *API) Pictures(w http.ResponseWriter, req *http.Request) {
 }
 
 func (api *API) GetPictures(w http.ResponseWriter, req *http.Request) {
+	// Path Traversal
+	// curl -H "userId: ../../" localhost:8081/images
+	userId := req.Header.Get("userId")
+	log.Printf("Getting pictures for user [%s]", userId)
 
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	wd = filepath.Join(wd, "images", userId)
+
+	cmd := exec.Command("ls", wd)
+
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(strings.Split(string(out), "\n"))
+	if err != nil {
+		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(data)
 }
 
 // curl -H "userId: 1" -X POST -F file=@rick.jpg localhost:8081/images

@@ -2,14 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
+	"go.benjiv.com/gc22/ui"
 )
 
 func main() {
@@ -27,21 +29,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	app, err := api.App()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	router := http.NewServeMux()
-	router.Handle("/", http.HandlerFunc(api.Route))
+	router.Handle("/", http.FileServer(app))
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 	router.Handle("/user", http.HandlerFunc(api.User))
 	router.Handle("/friend", http.HandlerFunc(api.Friend))
 	router.Handle("/friends", http.HandlerFunc(api.Friends))
 	router.Handle("/users", http.HandlerFunc(api.Users))
 	router.Handle("/images", http.HandlerFunc(api.Pictures))
-
-	out, err := Command("ls", ".")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(string(out))
+	router.Handle("/search", http.HandlerFunc(api.Search))
 
 	http.ListenAndServe(":8081", router)
 }
@@ -53,27 +54,47 @@ type API struct {
 	sessions map[int]string
 }
 
-func (api *API) Route(rw http.ResponseWriter, req *http.Request) {
-	file := fmt.Sprintf("%s/index.html", prefix)
-	if req.URL.Path != "/" {
-		file = fmt.Sprintf("%s/%s", prefix, string(req.URL.Path[1:]))
+func (api *API) App() (http.FileSystem, error) {
+	fsys, err := fs.Sub(ui.FS, "build")
+	if err != nil {
+		return nil, err
 	}
 
-	fmt.Printf("Routing to %s\n", file)
+	return http.FS(fsys), nil
+}
 
-	body, err := os.ReadFile(file)
+func (api *API) Search(rw http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "GET":
+		api.GetSearch(rw, req)
+	default:
+		rw.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+type Results struct {
+	Query string
+	Users []User
+}
+
+func (api *API) GetSearch(rw http.ResponseWriter, req *http.Request) {
+	query := req.URL.Query().Get("query")
+
+	log.Printf("Getting search results for [%s]", query)
+
+	// TODO: Implement search
+	results := Results{
+		Query: query,
+		Users: []User{},
+	}
+
+	data, err := json.Marshal(results)
 	if err != nil {
-		rw.WriteHeader(http.StatusNotFound)
+		log.Fatal(err)
+		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	rw.Write(body)
-}
-
-func Command(cmd string, args ...string) ([]byte, error) {
-	log.Printf("Command: %s Args: %s\n", cmd, args)
-
-	args = append([]string{"-c", cmd}, args...)
-
-	return exec.Command("/bin/bash", args...).Output()
+	rw.Write(data)
 }
