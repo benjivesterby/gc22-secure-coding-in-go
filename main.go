@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -36,6 +37,7 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("/", http.FileServer(app))
+	router.Handle("/imgs/", http.HandlerFunc(api.Image))
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 	router.Handle("/user", http.HandlerFunc(api.User))
 	router.Handle("/friend", http.HandlerFunc(api.Friend))
@@ -61,6 +63,28 @@ func (api *API) App() (http.FileSystem, error) {
 	}
 
 	return http.FS(fsys), nil
+}
+
+// http://localhost:8081/imgs/1/rick.jpg
+func (api *API) Image(rw http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "GET":
+		rw.Header().Set("Content-Type", "image/jpeg")
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		path := strings.TrimPrefix(req.URL.Path, "/imgs/")
+		file := filepath.Join(wd, "images", path)
+
+		http.ServeFile(rw, req, file)
+	default:
+		rw.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 }
 
 func (api *API) Search(rw http.ResponseWriter, req *http.Request) {
