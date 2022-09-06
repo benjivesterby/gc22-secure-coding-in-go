@@ -21,7 +21,7 @@ Clone the Code `git clone git@github.com/benjivesterby/gc22-secure-coding-in-go`
 
 Generate UI `go generate ./...`
 
-Execute `go run main.go`
+Execute `go run .`
 
 Navigate to `localhost:8081`
 
