@@ -19,6 +19,8 @@ Do not use this application...
 
 Clone the Code `git clone git@github.com/benjivesterby/gc22-secure-coding-in-go`
 
+Generate UI `go generate ./...`
+
 Execute `go run main.go`
 
 You shouldn't even build it to ensure you don't accidentally build it
