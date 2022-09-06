@@ -23,5 +23,7 @@ Generate UI `go generate ./...`
 
 Execute `go run main.go`
 
+Navigate to `localhost:8081`
+
 You shouldn't even build it to ensure you don't accidentally build it
 somewhere important.
