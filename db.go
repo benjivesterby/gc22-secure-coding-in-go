@@ -1,9 +1,7 @@
 package main
 
 import (
-	"crypto/sha256"
 	"database/sql"
-	"encoding/base64"
 	"fmt"
 	"log"
 
@@ -44,12 +42,9 @@ func InitDB() (*sql.DB, error) {
 }
 
 func NewUser(db *sql.DB, name, email, password string) (int, error) {
-	hash := sha256.Sum256([]byte(password))
-	encoded := base64.StdEncoding.EncodeToString(hash[:])
-
 	createUser := fmt.Sprintf(
 		`INSERT INTO users VALUES(NULL,'%s','%s','%s');`,
-		name, email, encoded,
+		name, email, password,
 	)
 
 	log.Println(createUser)
@@ -64,6 +59,34 @@ func NewUser(db *sql.DB, name, email, password string) (int, error) {
 		return 0, err
 	}
 	return int(id), nil
+}
+
+func GetUser(db *sql.DB, email, password string) (*User, error) {
+	log.Printf("Getting user [%s] from database", email)
+
+	q := fmt.Sprintf(`
+		SELECT * 
+		FROM users 
+		WHERE Email='%s' AND Password = '%s'
+		LIMIT 1;`,
+		email,
+		password,
+	)
+
+	fmt.Println(q)
+
+	row := db.QueryRow(q)
+	if row == nil {
+		return nil, fmt.Errorf("User not found")
+	}
+
+	var user User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
 }
 
 func AddFriend(db *sql.DB, userId, friendId string) error {
@@ -82,10 +105,7 @@ func AddFriend(db *sql.DB, userId, friendId string) error {
 // VULN: SQL Injection w/ DoS
 // localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users%3B--
 func GetFriends(userId string) ([]*User, error) {
-	dbx, err := sqlx.Open(
-		"sqlite3",
-		db,
-	)
+	dbx, err := sqlx.Open("sqlite3", db)
 	if err != nil {
 		return nil, err
 	}

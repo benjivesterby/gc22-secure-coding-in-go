@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +11,6 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
-	"go.benjiv.com/gc22/ui"
 )
 
 func main() {
@@ -30,13 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	app, err := api.App()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	router := http.NewServeMux()
-	router.Handle("/", http.FileServer(app))
 	router.Handle("/imgs/", http.HandlerFunc(api.Image))
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 	router.Handle("/user", http.HandlerFunc(api.User))
@@ -45,6 +37,7 @@ func main() {
 	router.Handle("/users", http.HandlerFunc(api.Users))
 	router.Handle("/images", http.HandlerFunc(api.Pictures))
 	router.Handle("/search", http.HandlerFunc(api.Search))
+	router.Handle("/login", http.HandlerFunc(api.Login))
 
 	http.ListenAndServe(":8081", router)
 }
@@ -56,16 +49,6 @@ type API struct {
 	sessions map[int]string
 }
 
-func (api *API) App() (http.FileSystem, error) {
-	fsys, err := fs.Sub(ui.FS, "build")
-	if err != nil {
-		return nil, err
-	}
-
-	return http.FS(fsys), nil
-}
-
-// http://localhost:8081/imgs/1/rick.jpg
 func (api *API) Image(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":

@@ -7,12 +7,9 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func (api *API) Users(w http.ResponseWriter, req *http.Request) {
-	log.Print("Users")
 	switch req.Method {
 	case "GET":
 		api.GetUsers(w, req)
@@ -47,7 +44,7 @@ type User struct {
 }
 
 func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
-	id := req.URL.Query().Get("id")
+	id := req.URL.Query().Get("userId")
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -65,7 +62,6 @@ func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Print("Loaded User: ", spew.Sdump(user))
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
@@ -121,7 +117,7 @@ func (api *API) CreateUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	id, err := NewUser(api.db, user.Name, user.Email, user.Password)
+	id, err := NewUser(api.db, user.Name, user.Email, Hash(user.Password))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -130,8 +126,6 @@ func (api *API) CreateUser(w http.ResponseWriter, req *http.Request) {
 	// Update the user with the new id and clear the password
 	user.ID = id
 	user.Password = ""
-
-	log.Print("Created User: ", spew.Sdump(user))
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -167,46 +161,29 @@ func (api *API) UpdateUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Print("Updated User: ", spew.Sdump(user))
-
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
 
 func (api *API) DeleteUser(w http.ResponseWriter, req *http.Request) {
-	safe := req.URL.Query().Get("safe")
-
-	id := req.URL.Query().Get("id")
+	id := req.URL.Query().Get("userId")
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if safe == "" {
-		// VULN: curl -X DELETE 'localhost:8081/user?id="7%27%20or%201%3D1--"'
-		// 7' or 1=1--
-		_, err := api.db.Exec(fmt.Sprintf("DELETE FROM users WHERE id = '%s'", id))
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		if _, err := strconv.Atoi(id); err != nil {
-			fmt.Print(hacked)
-			err = nil
-		}
-	} else {
-		_, err := api.db.Exec("DELETE FROM users WHERE id = '%s'", id)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	q := fmt.Sprintf("DELETE FROM users WHERE id = '%s'", id)
+	_, err := api.db.Exec(q)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	// Should really be
-	// _, err := api.db.Exec("DELETE FROM users WHERE id = '?'", id)
 
-	log.Print("Deleted User: ", id)
+	if _, err := strconv.Atoi(id); err != nil {
+		fmt.Print(hacked)
+		err = nil
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
