@@ -2,16 +2,21 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
+const prefix = "html"
+
+type API struct {
+	db       *sql.DB
+	sessions map[int]string
+}
 
 func main() {
 	if !strings.Contains(os.Args[0], "go") {
@@ -29,79 +34,21 @@ func main() {
 	}
 
 	router := http.NewServeMux()
-	router.Handle("/imgs/", http.HandlerFunc(api.Image))
-	router.Handle("/upload", http.HandlerFunc(api.Upload))
-	router.Handle("/user", http.HandlerFunc(api.User))
-	router.Handle("/friend", http.HandlerFunc(api.Friend))
-	router.Handle("/friends", http.HandlerFunc(api.Friends))
-	router.Handle("/users", http.HandlerFunc(api.Users))
-	router.Handle("/images", http.HandlerFunc(api.Pictures))
-	router.Handle("/search", http.HandlerFunc(api.Search))
+
+	// Auth
 	router.Handle("/login", http.HandlerFunc(api.Login))
 
-	http.ListenAndServe(":8081", router)
-}
+	// Users
+	router.Handle("/user", http.HandlerFunc(api.User))
+	router.Handle("/users", http.HandlerFunc(api.Users))
+	router.Handle("/friend", http.HandlerFunc(api.Friend))
+	router.Handle("/friends", http.HandlerFunc(api.Friends))
 
-const prefix = "html"
+	// Images
+	router.Handle("/images", http.HandlerFunc(api.Pictures))
+	router.Handle("/imgs/", http.HandlerFunc(api.Image))
+	router.Handle("/upload", http.HandlerFunc(api.Upload))
 
-type API struct {
-	db       *sql.DB
-	sessions map[int]string
-}
-
-func (api *API) Image(rw http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "GET":
-		rw.Header().Set("Content-Type", "image/jpeg")
-		wd, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		path := strings.TrimPrefix(req.URL.Path, "/imgs/")
-		file := filepath.Join(wd, "images", path)
-
-		http.ServeFile(rw, req, file)
-	default:
-		rw.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-}
-
-func (api *API) Search(rw http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "GET":
-		api.GetSearch(rw, req)
-	default:
-		rw.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-}
-
-type Results struct {
-	Query string
-	Users []User
-}
-
-func (api *API) GetSearch(rw http.ResponseWriter, req *http.Request) {
-	query := req.URL.Query().Get("query")
-
-	log.Printf("Getting search results for [%s]", query)
-
-	// TODO: Implement search
-	results := Results{
-		Query: query,
-		Users: []User{},
-	}
-
-	data, err := json.Marshal(results)
-	if err != nil {
-		log.Fatal(err)
-		rw.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	rw.Write(data)
+	log.Printf("Listening on port 8081")
+	log.Fatal(http.ListenAndServe(":8081", router))
 }

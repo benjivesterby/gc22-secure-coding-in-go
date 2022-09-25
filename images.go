@@ -14,6 +14,27 @@ import (
 	"time"
 )
 
+func (api *API) Image(rw http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "GET":
+		rw.Header().Set("Content-Type", "image/jpeg")
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		path := strings.TrimPrefix(req.URL.Path, "/imgs/")
+		file := filepath.Join(wd, "images", path)
+
+		http.ServeFile(rw, req, file)
+	default:
+		rw.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+}
+
 func (api *API) Pictures(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
