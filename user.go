@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -50,21 +51,33 @@ func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	query := fmt.Sprintf("SELECT id,name,email FROM users WHERE id = '%s'", id)
+	query := fmt.Sprintf(
+		"SELECT id,name,email FROM users WHERE id = '%s' limit 1",
+		id,
+	)
 
-	log.Print("Get user id: ", id)
-	row := api.db.QueryRow(query)
-
-	var user User
-	err := row.Scan(&user.ID, &user.Name, &user.Email)
+	log.Println(query)
+	rows, err := api.db.Query(query)
 	if err != nil {
+		log.Print("Error: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	users, err := api.readUsers(rows)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if len(users) == 0 {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(users[0])
 }
 
 func (api *API) GetUsers(w http.ResponseWriter, req *http.Request) {
@@ -79,22 +92,32 @@ func (api *API) GetUsers(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	defer rows.Close()
-	var users []User
-	for rows.Next() {
-		var user User
-		err := rows.Scan(&user.ID, &user.Name, &user.Email)
-		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		users = append(users, user)
+	users, err := api.readUsers(rows)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+
+func (api *API) readUsers(rows *sql.Rows) ([]User, error) {
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (api *API) CreateUser(w http.ResponseWriter, req *http.Request) {

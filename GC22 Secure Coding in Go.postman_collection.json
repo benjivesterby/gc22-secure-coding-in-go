@@ -76,7 +76,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8081/user?userId=7",
+					"raw": "localhost:8081/user?userId=9",
 					"host": [
 						"localhost"
 					],
@@ -87,7 +87,56 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "7"
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "query user - inject",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/user?userId=%27%20or%201%3D1%20--",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "%27%20or%201%3D1%20--"
 						}
 					]
 				}
@@ -255,7 +304,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"raw": "{\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -316,7 +365,136 @@
 			"response": []
 		},
 		{
+			"name": "list images for user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default"
+					},
+					{
+						"key": "",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/images",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list images - path traversal",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "../",
+						"type": "default"
+					},
+					{
+						"key": "",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/images",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Show Images - imgs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/imgs/1/rick.jpg",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"imgs",
+						"1",
+						"rick.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show Images - imgs Copy",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -406,48 +584,6 @@
 							"key": "userId",
 							"value": "1"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "List Images For User",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default"
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/images",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"images"
 					]
 				}
 			},
