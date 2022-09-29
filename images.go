@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"mime"
@@ -27,6 +28,8 @@ func (api *API) Image(rw http.ResponseWriter, req *http.Request) {
 
 		path := strings.TrimPrefix(req.URL.Path, "/imgs/")
 		file := filepath.Join(wd, "images", path)
+
+		fmt.Println(file)
 
 		http.ServeFile(rw, req, file)
 	default:

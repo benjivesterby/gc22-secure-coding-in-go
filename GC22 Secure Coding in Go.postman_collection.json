@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "bf774eae-6188-4c2c-bb11-443deb17bd63",
+		"_postman_id": "6d440576-92c0-4d91-a393-d185cc9a03f4",
 		"name": "GC22 Secure Coding in Go",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17834038"
 	},
 	"item": [
 		{
@@ -193,178 +194,6 @@
 			"response": []
 		},
 		{
-			"name": "delete user",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/user?userId=6",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"user"
-					],
-					"query": [
-						{
-							"key": "userId",
-							"value": "6"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete user - injection",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/user?userId=%27%20or%201%3D1%3B--",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"user"
-					],
-					"query": [
-						{
-							"key": "userId",
-							"value": "%27%20or%201%3D1%3B--"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login user",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/login",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login user - bypass",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/login",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "list images for user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -375,12 +204,12 @@
 					{
 						"key": "userId",
 						"value": "1",
-						"type": "default"
+						"type": "text"
 					},
 					{
 						"key": "",
 						"value": "multipart/form-data",
-						"type": "default",
+						"type": "text",
 						"disabled": true
 					}
 				],
@@ -494,7 +323,7 @@
 			"response": []
 		},
 		{
-			"name": "Show Images - imgs Copy",
+			"name": "Show Images - no image",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -524,7 +353,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8081/imgs/1/rick.jpg",
+					"raw": "localhost:8081/imgs/1/",
 					"host": [
 						"localhost"
 					],
@@ -532,7 +361,179 @@
 					"path": [
 						"imgs",
 						"1",
-						"rick.jpg"
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show Images - path traversal Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/imgs/1/../",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"imgs",
+						"1",
+						"..",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show Images - pt secrets",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/imgs/1/../secrets.txt",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"imgs",
+						"1",
+						"..",
+						"secrets.txt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user - bypass",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
 					]
 				}
 			},
@@ -563,12 +564,7 @@
 							"type": "file",
 							"src": "/home/benji/gopherme.png"
 						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					]
 				},
 				"url": {
 					"raw": "localhost:8081/images?userId=1",
@@ -664,6 +660,98 @@
 					"port": "8081",
 					"path": [
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete user",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/user?userId=6",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete user - injection",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/user?userId=%27%20or%201%3D1%3B--",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "%27%20or%201%3D1%3B--"
+						}
 					]
 				}
 			},

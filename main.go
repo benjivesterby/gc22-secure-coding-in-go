@@ -50,5 +50,5 @@ func main() {
 	router.Handle("/upload", http.HandlerFunc(api.Upload))
 
 	log.Printf("Listening on port 8081")
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8081", router))
 }
