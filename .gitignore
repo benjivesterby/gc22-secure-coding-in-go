@@ -26,3 +26,4 @@ coverage.html
 .DS_Store
 supersecret.db
 gc22
+*.txt

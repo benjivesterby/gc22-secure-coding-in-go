@@ -26,7 +26,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"hahapassword\",\n    \"role\": \"user\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -77,7 +77,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8081/user?userId=9",
+					"raw": "localhost:8081/user?userId=7",
 					"host": [
 						"localhost"
 					],
@@ -88,7 +88,7 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "9"
+							"value": "7"
 						}
 					]
 				}
@@ -194,6 +194,55 @@
 			"response": []
 		},
 		{
+			"name": "-> Add DATA Leakage over Return",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/users?isAdmin=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "isAdmin",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "list images for user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -245,7 +294,7 @@
 				"header": [
 					{
 						"key": "userId",
-						"value": "../",
+						"value": "../../benjiv",
 						"type": "default"
 					},
 					{
