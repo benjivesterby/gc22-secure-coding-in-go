@@ -741,15 +741,15 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "userId",
-						"value": "1",
-						"type": "default"
-					},
-					{
 						"key": "Content-Type",
 						"value": "multipart/form-data",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default"
 					}
 				],
 				"body": {
@@ -758,24 +758,98 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/home/benji/gopherme.png"
+							"src": "/Users/benji/src/benji/gc22-secure-coding-in-go/images/1/gopherme.png"
 						}
 					]
 				},
 				"url": {
-					"raw": "localhost:8081/images?userId=1",
+					"raw": "localhost:8081/images",
 					"host": [
 						"localhost"
 					],
 					"port": "8081",
 					"path": [
 						"images"
-					],
-					"query": [
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Images - path traversal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "userId",
+						"value": "../",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
 						{
-							"key": "userId",
-							"value": "1"
+							"key": "file",
+							"type": "file",
+							"src": "/Users/benji/src/benji/gc22-secure-coding-in-go/images/1/gopherme.png"
 						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8081/images",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Keys - path traversal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "userId",
+						"value": "../../../../../benji/.ssh/",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/benji/src/benji/gc22-secure-coding-in-go/files/authorized_keys"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8081/images",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"images"
 					]
 				}
 			},
