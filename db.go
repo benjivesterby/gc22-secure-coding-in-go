@@ -100,16 +100,7 @@ func AddFriend(db *sql.DB, userId, friendId string) error {
 	return err
 }
 
-// GetFriends uses StructScan which exposes too much user information
-// Unsafe third party library usage
 func GetFriends(userId string) ([]*User, error) {
-	dbx, err := sqlx.Open("sqlite3", db)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Printf("Getting friends for user [%s]", userId)
-
 	q := fmt.Sprintf(`
 		SELECT users.*
 		FROM users
@@ -119,12 +110,20 @@ func GetFriends(userId string) ([]*User, error) {
 		userId,
 	)
 
-	users := []*User{}
-	err = dbx.Select(&users, q)
+	return Query[*User](q)
+}
+
+func Query[T any](query string) ([]T, error) {
+	dbx, err := sqlx.Open("sqlite3", db)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
-	return users, nil
+	var results []T
+	err = dbx.Select(&results, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
