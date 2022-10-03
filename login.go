@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"time"
+
+	"golang.org/x/crypto/argon2"
 )
 
 func (api *API) Login(w http.ResponseWriter, req *http.Request) {
@@ -71,4 +76,52 @@ func Hash(data string) string {
 	hash := sha256.Sum256([]byte(data))
 
 	return base64.StdEncoding.EncodeToString(hash[:])
+}
+
+func ShaTest(file string) {
+	start := time.Now()
+	count := 0
+	defer func() {
+		log.Printf("Took %s to hash %d passwords", time.Since(start), count)
+	}()
+
+	log.Printf("Sha256 Hashing [%s]", file)
+
+	f, err := os.Open(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	salt := "salt"
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		Hash(scanner.Text() + salt)
+		count++
+	}
+}
+
+func ArgonTest(file string) {
+	start := time.Now()
+	count := 0
+	defer func() {
+		log.Printf("Took %s to hash %d passwords", time.Since(start), count)
+	}()
+
+	log.Printf("Argon2id Hashing [%s]", file)
+
+	f, err := os.Open(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	salt := []byte("salt")
+	for scanner.Scan() {
+		argon2.IDKey(scanner.Bytes(), salt, 1, 64*1024, 4, 32)
+		count++
+	}
 }

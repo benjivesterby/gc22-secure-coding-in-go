@@ -27,6 +27,7 @@ func main() {
 
 	api := &API{}
 
+	var err error
 	api.db, err = InitDB()
 	if err != nil {
 		log.Fatal(err)

@@ -243,6 +243,153 @@
 			"response": []
 		},
 		{
+			"name": "friends",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/friends?userId=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"friends"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "friends - injection",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users--",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"friends"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1%27%20union%20select%20%2A%20from%20users--"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "friends - DoS",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users%3B--",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"friends"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1%27%20union%20select%20%2A%20from%20users%3B--"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "list images for user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
