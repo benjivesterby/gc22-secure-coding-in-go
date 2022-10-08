@@ -140,7 +140,12 @@ func (api *API) CreateUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	id, err := NewUser(api.db, user.Name, user.Email, Hash(user.Password))
+	id, err := NewUser(
+		api.db,
+		user.Name,
+		user.Email,
+		Hash(user.Password),
+	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/jmoiron/sqlx"
 )
 
 func (api *API) Friends(w http.ResponseWriter, req *http.Request) {
@@ -59,4 +62,32 @@ func (api *API) GetFriends(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Write(data)
+}
+
+func GetFriends(userId string) ([]*User, error) {
+	q := fmt.Sprintf(`
+		SELECT users.*
+		FROM users
+		JOIN friends ON users.ID = friends.FriendId
+		WHERE friends.UserId = '%s';
+		`,
+		userId,
+	)
+
+	return Query[*User](q)
+}
+
+func Query[T any](query string) ([]T, error) {
+	dbx, err := sqlx.Open("sqlite3", db)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []T
+	err = dbx.Select(&results, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

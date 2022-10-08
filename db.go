@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	"github.com/jmoiron/sqlx"
 )
 
 const db = "supersecret.db"
@@ -41,7 +39,12 @@ func InitDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func NewUser(db *sql.DB, name, email, password string) (int, error) {
+func NewUser(
+	db *sql.DB,
+	name,
+	email,
+	password string,
+) (int, error) {
 	createUser := fmt.Sprintf(
 		`INSERT INTO users VALUES(NULL,'%s','%s','%s');`,
 		name, email, password,
@@ -98,32 +101,4 @@ func AddFriend(db *sql.DB, userId, friendId string) error {
 
 	_, err := db.Exec(`INSERT INTO friends VALUES(?,?);`, userId, friendId)
 	return err
-}
-
-func GetFriends(userId string) ([]*User, error) {
-	q := fmt.Sprintf(`
-		SELECT users.*
-		FROM users
-		JOIN friends ON users.ID = friends.FriendId
-		WHERE friends.UserId = '%s';
-		`,
-		userId,
-	)
-
-	return Query[*User](q)
-}
-
-func Query[T any](query string) ([]T, error) {
-	dbx, err := sqlx.Open("sqlite3", db)
-	if err != nil {
-		return nil, err
-	}
-
-	var results []T
-	err = dbx.Select(&results, query)
-	if err != nil {
-		return nil, err
-	}
-
-	return results, nil
 }

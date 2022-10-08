@@ -24,6 +24,5 @@ coverage.html
 
 # ignore mac files
 .DS_Store
-supersecret.db
 gc22
 *.txt
