@@ -69,14 +69,14 @@ func (api *API) GetPictures(w http.ResponseWriter, req *http.Request) {
 
 	out, err := cmd.Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	data, err := json.Marshal(strings.Split(string(out), "\n"))
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

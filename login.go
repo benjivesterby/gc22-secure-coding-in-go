@@ -57,14 +57,14 @@ func (api *API) LoginUser(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Logging in user [%s]", user.Email)
 	user, err = GetUser(api.db, user.Email, Hash(user.Password))
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	data, err := json.Marshal(user)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -89,7 +89,7 @@ func ShaTest(file string) {
 
 	f, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	defer f.Close()
@@ -113,7 +113,7 @@ func ArgonTest(file string) {
 
 	f, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	defer f.Close()
