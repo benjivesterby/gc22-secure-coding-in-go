@@ -1,6 +1,9 @@
 # Get User
 curl 'localhost:8081/user?userId=10' | jq
 
+# Probe User
+curl 'localhost:8081/user?userId=%27%20or%201%3D1--' | jq
+
 # normal
 curl 'localhost:8081/friends?userId=10' | jq
 

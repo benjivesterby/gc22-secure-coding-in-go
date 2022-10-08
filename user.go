@@ -10,40 +10,6 @@ import (
 	"strconv"
 )
 
-func (api *API) Users(w http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "GET":
-		api.GetUsers(w, req)
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-}
-
-func (api *API) User(w http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "GET":
-		api.GetUser(w, req)
-	case "POST":
-		api.UpdateUser(w, req)
-	case "PUT":
-		api.CreateUser(w, req)
-	case "DELETE":
-		api.DeleteUser(w, req)
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-}
-
-type User struct {
-	ID       int    `json:"id" db:"ID"`
-	Name     string `json:"name" db:"Name"`
-	Email    string `json:"email" db:"Email"`
-	Password string `json:"password" db:"Password"`
-	Role     string `json:"role, omitempty" db:"Role"`
-}
-
 func (api *API) GetUser(
 	w http.ResponseWriter,
 	req *http.Request,
@@ -80,6 +46,40 @@ func (api *API) GetUser(
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users[0])
+}
+
+func (api *API) Users(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "GET":
+		api.GetUsers(w, req)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func (api *API) User(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "GET":
+		api.GetUser(w, req)
+	case "POST":
+		api.UpdateUser(w, req)
+	case "PUT":
+		api.CreateUser(w, req)
+	case "DELETE":
+		api.DeleteUser(w, req)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+type User struct {
+	ID       int    `json:"id" db:"ID"`
+	Name     string `json:"name" db:"Name"`
+	Email    string `json:"email" db:"Email"`
+	Password string `json:"password" db:"Password"`
+	Role     string `json:"role, omitempty" db:"Role"`
 }
 
 func (api *API) GetUsers(w http.ResponseWriter, req *http.Request) {
