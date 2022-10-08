@@ -5,7 +5,11 @@ curl 'localhost:8081/user?userId=10' | jq
 curl 'localhost:8081/user?userId=%27%20or%201%3D1--' | jq
 
 # normal
-curl 'localhost:8081/friends?userId=10' | jq
+curl 'localhost:8081/friends?userId=10'
+curl 'localhost:8081/friends?userId=1' | jq
+
+# Error
+curl  -sw 'Status Code: %{http_code}' 'localhost:8081/friends?userId=10'
 
 # probe
 # ' or 1=1--
