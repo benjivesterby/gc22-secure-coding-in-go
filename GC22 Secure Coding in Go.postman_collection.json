@@ -194,6 +194,56 @@
 			"response": []
 		},
 		{
+			"name": "friends - add",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/friend?userId=6&friendId=8",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"friend"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "6"
+						},
+						{
+							"key": "friendId",
+							"value": "8"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "friends",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
