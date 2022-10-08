@@ -44,20 +44,22 @@ type User struct {
 	Role     string `json:"role, omitempty" db:"Role"`
 }
 
-func (api *API) GetUser(w http.ResponseWriter, req *http.Request) {
+func (api *API) GetUser(
+	w http.ResponseWriter,
+	req *http.Request,
+) {
 	id := req.URL.Query().Get("userId")
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	query := fmt.Sprintf(
-		"SELECT id,name,email FROM users WHERE id = '%s' limit 1",
+	rows, err := api.db.Query(fmt.Sprintf(
+		`SELECT id,name,email 
+		 FROM users 
+		 WHERE id = '%s' limit 1`,
 		id,
-	)
-
-	log.Println(query)
-	rows, err := api.db.Query(query)
+	))
 	if err != nil {
 		log.Print("Error: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
