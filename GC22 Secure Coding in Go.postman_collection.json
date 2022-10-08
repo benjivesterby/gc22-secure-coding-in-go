@@ -26,7 +26,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"hahapassword\",\n    \"role\": \"user\"\n}",
+					"raw": "{\n    \"name\": \"Bad Gopher\",\n    \"email\": \"naughty@fluffy.go\",\n    \"password\": \"bad\",\n    \"role\": \"swarm\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -194,55 +194,6 @@
 			"response": []
 		},
 		{
-			"name": "-> Add DATA Leakage over Return",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"benji\",\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\",\n    \"role\": \"user\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/users?isAdmin=1",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"users"
-					],
-					"query": [
-						{
-							"key": "isAdmin",
-							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "friends",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -273,7 +224,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8081/friends?userId=1",
+					"raw": "localhost:8081/friends?userId=9",
 					"host": [
 						"localhost"
 					],
@@ -284,7 +235,7 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "1"
+							"value": "9"
 						}
 					]
 				}
@@ -656,7 +607,7 @@
 			"response": []
 		},
 		{
-			"name": "login user",
+			"name": "login user - valid pass",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -676,6 +627,46 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"HelloK!ttyClub!2022\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user - invalid pass",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"benji@benjiv.com\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -758,7 +749,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/Users/benji/src/benji/gc22-secure-coding-in-go/images/1/gopherme.png"
+							"src": []
 						}
 					]
 				},
@@ -850,86 +841,6 @@
 					"port": "8081",
 					"path": [
 						"images"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login Copy 3",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/login",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login Copy 4",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "userId",
-						"value": "1",
-						"type": "default",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"value": "multipart/form-data",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@friends.com' --\",\n    \"password\": \"doesn't matter\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8081/login",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"login"
 					]
 				}
 			},
