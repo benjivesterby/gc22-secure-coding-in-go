@@ -31,6 +31,9 @@ curl -sw 'Status Code: %{http_code}' -X POST 'localhost:8081/login' -d '{ "email
 # ' --
 curl -v -X POST 'localhost:8081/login' -d "{ \"email\": \"gopher@golang.org' --\",\"password\": \"doesn't matter\"}" | jq
 
+# List Images
+curl -H "userId:1" 'localhost:8081/images' | jq
+
 # File Upload
 curl -sw 'Status Code: %{http_code}' -H "userId:10" -F 'file=@./gopherme.png' 'localhost:8081/images'
 
