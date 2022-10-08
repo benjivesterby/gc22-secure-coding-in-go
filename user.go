@@ -28,13 +28,15 @@ func (api *API) GetUser(
 	))
 	if err != nil {
 		log.Print("Error: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(
+			http.StatusInternalServerError)
 		return
 	}
 
 	users, err := api.readUsers(rows)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(
+			http.StatusInternalServerError)
 		return
 	}
 
@@ -44,7 +46,8 @@ func (api *API) GetUser(
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(
+		"Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users[0])
 }
 

