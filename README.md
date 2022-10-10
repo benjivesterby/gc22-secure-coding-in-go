@@ -3,6 +3,8 @@
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
+[Click here for the presentation slides](https://docs.google.com/presentation/d/e/2PACX-1vTSrz8uHqdKJdeiyRzpvcqCiOXAVQZdy7tTPpOjrLZwcv6ApcjVa0IEnkSHOIK_sMWl7GI5lbl2_CUt/pub?start=false&loop=false&delayms=3000)
+
 >>**!!!! DO NOT USE THIS APPLICATION!!!!**
 
 This is a purposefully vulnerable application intended for security training!
