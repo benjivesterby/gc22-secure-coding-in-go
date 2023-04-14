@@ -27,3 +27,7 @@ Navigate to `localhost:8081`
 
 You shouldn't even build it to ensure you don't accidentally build it
 somewhere important.
+
+```
+git -c user.name='Linus Torvalds' -c user.email='torvalds@linux-foundation.org' commit -m "I 💕 Kernelcon!" 
+```
