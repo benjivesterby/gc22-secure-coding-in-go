@@ -31,5 +31,3 @@ somewhere important.
 ```
 git -c user.name='Linus Torvalds' -c user.email='torvalds@linux-foundation.org' commit -m "I 💕 Kernelcon!" 
 ```
-
-<!-- Comment for commit-->
